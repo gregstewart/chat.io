@@ -1,13 +1,15 @@
 # Simple chat
 
-To get started [install node.js] (https://github.com/joyent/node/wiki/Installation). Then using npm install:
+To get started [install node.js](https://github.com/joyent/node/wiki/Installation). Then using npm install:
 
- * [socket.io] (http://socket.io/)
+ * [socket.io](http://socket.io/)
 
 To get start from the command line:
 
 `git clone https://github.com/gregstewart/chat.io.git
+
 cd chat.io
+
 sudo node ChatSocket.js
 `
 
