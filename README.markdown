@@ -13,4 +13,12 @@ To get start from the command line:
 
 You might be prompted by your firewall that something is listening on port 8080, that's the node server. Finally open up a browser and go to [http://localhost:8080/](http://localhost:8080/), then open up another browser and type in a message and submit it, the message should appear in the first browser.
 
+To change the port of the server open up chatSocket.js and look for:
+
+`server.listen(8080);`
+
+Simply change the value 8080, to whatever you want.
+
+To change the appearance of the "UI" simply edit the index.html file.
+
 by [Greg Stewart](http://gregs.tcias.co.uk/)
