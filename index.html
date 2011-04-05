@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>chat.io</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
+    <script src="http://localhost:8080/socket.io/socket.io.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var socket = new io.Socket('localhost', {port: 8080});
+        var isConnected = socket.connect();
+
+        function getFormattedDate() {
+            var date = new Date();
+            return ' [ ' + date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ' ]';
+        }
+
+        function sendMessage() {
+            var message = $('input#shout-box').val();
+            insertMessage('me', message);
+            socket.send(message);
+        }
+
+        function insertMessage(user, message, type) {
+            if (!typeof type === 'undefined')
+            {
+
+            }
+            
+            $('ul#message-list').prepend('<li>' + user + ' ' + getFormattedDate() + ' : ' + message + '</li>');
+        }
+
+        if(isConnected) {
+            socket.on('connect', function(data) {
+                console.log('connect');
+            });
+
+            socket.on('message', function(data){
+                data = JSON.parse(data);
+                insertMessage(data.id, data.message);
+            });
+
+            socket.on('disconnect', function() {
+                console.log('disconnect');
+            });
+        }
+    </script>
+    <style media="screen" type="text/css">
+        #message-box {
+            border: #ff0033 1px solid;
+            height: 100px;
+            overflow: scroll;
+        }
+    </style>
+</head>
+<body>
+<form action="" method="post" enctype="application/x-www-form-urlencoded">
+    <label for="shout-box">message: </label> <input type="text" id="shout-box" value="" />
+    <input type="button" value="send" id="btn-test" />
+</form>
+<hr />
+<div id="message-box">
+    <ul id="message-list">
+    </ul>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready( function() {
+        if (isConnected) {
+            $('input#btn-test').click(function() {
+                sendMessage();
+            });
+
+            $('input#shout-box').keydown(function(event) {
+                if (event.keyCode == '13') {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
