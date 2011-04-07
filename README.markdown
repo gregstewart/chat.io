@@ -25,6 +25,6 @@ To change the appearance of the "UI" simply edit the index.html file.
 
 ### Update
 
-I have added [expressjs](http://expressjs.com/) and mongoDB to capture user names in a database (for display purposes and for kicks really)
+I have added [expressjs](http://expressjs.com/) and [mongoDB](http://www.mongodb.org/) to capture user names in a database (for display purposes and for kicks really)
 
 by [Greg Stewart](http://gregs.tcias.co.uk/)
