@@ -1,6 +1,6 @@
 # Simple chat
 
-To get started [install node.js](https://github.com/joyent/node/wiki/Installation). Then using npm install:
+To get started [install node.js](https://github.com/joyent/node/wiki/Installation) and [npm](http://npmjs.org/). Then use npm to install:
 
  * [socket.io](http://socket.io/)
 
