@@ -1,4 +1,4 @@
-exports.start = function() {
+exports.start = function(user) {
 
     var http = require('http'); // http service
     var io = require('socket.io'); // for npm, otherwise use require('./path/to/socket.io')
@@ -31,10 +31,19 @@ exports.start = function() {
         });
 
         client.on('disconnect', function() {
+            deleteUser(client.sessionId);
             request.id = client.sessionId;
             request.type = 'disconnected';
             request.message = ' has disconnected';
             client.broadcast(json(request));
         });
     });
+
+    function deleteUser(id) {
+        user.remove(id, function(error, doc) {
+            if (error !== null) {
+                console.log('there\'s been an error deleting the user: ' + error);
+            }
+        });
+    }
 }

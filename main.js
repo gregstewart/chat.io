@@ -4,7 +4,7 @@ var express = require('express');
 var fs = require('fs'); // file system
 var indexFile = fs.readFileSync('./public/index.html'); //read the html page to be served (chat interface)
 
-var userProvider= new UserProvider('localhost', 27017);
+var userProvider = new UserProvider('localhost', 27017);
 
 var app = express.createServer();
 app.configure(function() {
@@ -18,7 +18,6 @@ app.get('/', function(req, res) {
 });
 
 app.post('/user/new', function(req, res) {
-    console.log(res);
     userProvider.save({
         handle: req.body.handle,
         sessionid: req.body.sessionid
@@ -30,4 +29,4 @@ app.post('/user/new', function(req, res) {
 
 app.listen(3000);
 
-chatSocket.start();
+chatSocket.start(userProvider);

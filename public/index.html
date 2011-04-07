@@ -44,9 +44,9 @@
             if (handle !== '') {
                 you = handle;
                 $.ajax({
-                    type: "post",
-                    url: "/user/new",
-                    data: "handle=" + handle + '&sessionid=' + isConnected.transport.sessionid,
+                    type: 'post',
+                    url: '/user/new',
+                    data: 'handle=' + handle + '&sessionid=' + isConnected.transport.sessionid,
                     dataType: 'json',
                     success: function(response) {
 

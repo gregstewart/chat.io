@@ -6,8 +6,8 @@ var BSON = require('mongodb').BSONNative;
 
 UserProvider = function(host, port) {
     this.db = new mongo.Db('node-mongo-chat', new Server(host, port, {auto_reconnect: true}, {}));
-    this.db.addListener("error", function(error) {
-      console.log("Error connecting to mongo -- perhaps it isn't running?");
+    this.db.addListener('error', function(error) {
+      console.log('Error connecting to mongo -- perhaps it isn\'t running?');
     });
     this.db.open(function() {
     });
@@ -59,6 +59,22 @@ UserProvider.prototype.save = function(users, callback) {
 
                 user_collection.insert(users, function() {
                     callback(null, users);
+                });
+            }
+
+
+        }
+    });
+};
+
+UserProvider.prototype.remove = function(id, callback) {
+    this.getCollection(function(error, user_collection) {
+        if (error) {
+            callback(error);
+        } else {
+            if (typeof(id) !== 'undefined') {
+                user_collection.remove({'sessionid':id}, function() {
+                    callback(null, 'User deleted');
                 });
             }
 
