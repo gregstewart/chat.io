@@ -10,11 +10,18 @@ var app = express.createServer();
 app.configure(function() {
     app.use(express.methodOverride());
     app.use(express.bodyParser());
+    app.use(express.static(__dirname + '/public'));
     app.use(app.router);
 });
 
 app.get('/', function(req, res) {
     res.end(indexFile);
+});
+
+app.get('/user/', function(req, res) {
+   userProvider.findAll(function(error, results) {
+       res.send({error:error, users:results});
+    });
 });
 
 app.post('/user/new', function(req, res) {

@@ -5,6 +5,7 @@
     <title>chat.io</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
     <script src="http://localhost:8080/socket.io/socket.io.js" type="text/javascript"></script>
+    <script src="js/underscore-min.js" type="text/javascript"></script>
     <script type="text/javascript">
         var socket = new io.Socket('localhost', {port: 8080});
         var isConnected = socket.connect();
@@ -56,6 +57,7 @@
                             $('#login-container').hide();
                             $('.modal-overLay').fadeOut(500);
                             insertMessage(you, 'has connected');
+                            getLoggedInUsers();
                         }
                     }
                 });
@@ -63,6 +65,25 @@
             } else {
                 alert('Please enter a handle.');
             }
+        }
+
+        function getLoggedInUsers() {
+            $.ajax({
+                    type: 'get',
+                    url: '/user/',
+                    dataType: 'json',
+                    success: function(response) {
+
+                        if (response.error !== null) {
+                            alert('There\'s been an error, sorry unable to store handle');
+                        } else if (response.users.length > 0) {
+                            var users = response.users;
+                            _.each(users,function(i) {
+                                $('ul#loggedin-users').append('<li>' + i.handle + '</li>');
+                            });
+                        }
+                    }
+                })
         }
 
         function sendMessage() {
@@ -139,6 +160,9 @@
     <ul id="message-list">
     </ul>
 </div>
+
+<ul id="loggedin-users">
+</ul>
 
 
 <script type="text/javascript">
