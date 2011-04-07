@@ -1,16 +1,13 @@
 exports.start = function() {
 
-    var fs = require('fs'); // file system
     var http = require('http'); // http service
     var io = require('socket.io'); // for npm, otherwise use require('./path/to/socket.io')
     var json = JSON.stringify;
 
-    var indexFile = fs.readFileSync('./index.html'); //read the html page to be served (chat interface)
-
     // create http server and return chat interface
-    var server = http.createServer( function(req, res) {
-     res.writeHead(200, {'Content-Type': 'text/html'});
-     res.end(indexFile);
+    var server = http.createServer(function(req, res) {
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.end('');
     });
     server.listen(8080);
 
@@ -33,7 +30,7 @@ exports.start = function() {
             client.broadcast(json(request));
         });
 
-        client.on('disconnect', function(){
+        client.on('disconnect', function() {
             request.id = client.sessionId;
             request.type = 'disconnected';
             request.message = ' has disconnected';
