@@ -69,21 +69,21 @@
 
         function getLoggedInUsers() {
             $.ajax({
-                    type: 'get',
-                    url: '/user/',
-                    dataType: 'json',
-                    success: function(response) {
+                type: 'get',
+                url: '/user/',
+                dataType: 'json',
+                success: function(response) {
 
-                        if (response.error !== null) {
-                            alert('There\'s been an error, sorry unable to store handle');
-                        } else if (response.users.length > 0) {
-                            var users = response.users;
-                            _.each(users,function(i) {
-                                $('ul#loggedin-users').append('<li>' + i.handle + '</li>');
-                            });
-                        }
+                    if (response.error !== null) {
+                        alert('There\'s been an error, sorry unable to store handle');
+                    } else if (response.users.length > 0) {
+                        var users = response.users;
+                        _.each(users,function(i) {
+                            $('ul#loggedin-users').append('<li>' + i.handle + '</li>');
+                        });
                     }
-                })
+                }
+            });
         }
 
         function sendMessage() {
@@ -122,23 +122,82 @@
             });
 
             socket.on('disconnect', function() {
-                console.log('disconnect');
+                $.ajax({
+                    type: 'get',
+                    url: '/delete/',
+                    dataType: 'json',
+                    data: 'handle=' + you + '&sessionid=' + isConnected.transport.sessionid,
+                    success: function(response) {
+                        console.log('disconnect');
+                    }
+                });
             });
         }
     </script>
+    <link rel="css/reset.css" media="screen" type="text/css" />
     <style media="screen" type="text/css">
-        #message-box {
-            border: #ff0033 1px solid;
-            height: 100px;
-            overflow: scroll;
+        body {
+            margin: 0;
+            padding: 0;
         }
 
         #login-container {
             position: absolute;
             display: none;
-            background-color: #fff;
-            padding: 10%;
+            background-color: #69D2E7;
+            border-bottom: 2px solid #A7DBD8;
+            color: #E0E4CC;
+            padding: 2em;
+            font-size: 1em;
+            font-weight: bold;
         }
+
+        #header {
+            background-color: #FA6900;
+            border-bottom: 2px solid #F38630;
+            color: #fff;
+            padding-left: 1em;
+        }
+            #header h1 {
+                background-color: #FA6900;
+                color: #E0E4CC;
+                padding: 0.90em 1em 0 0;
+                margin: 0em;
+                font-size: 2em;
+            }
+
+            #header p {
+
+            }
+
+        #main-content {
+            border-top: 2px solid #E0E4CC;
+            background-color: #fff;
+        }
+            #main-content #input-box
+            {
+                margin: 1em 0.5em;
+                padding: 1em;
+                background-color: #69D2E7;
+                border-bottom: 2px solid #A7DBD8;
+                color: #E0E4CC;
+                font-size: 1em;
+                font-weight: bold;
+            }
+
+            #main-content hr {
+                margin: 1em 0.5em;
+                background-color: #69D2E7;
+                border-top:0;
+                border-bottom: 2px solid #A7DBD8;
+            }
+
+            #main-content #message-box {
+                border: #A7DBD8 1px solid;
+                height: 100px;
+                overflow: auto;
+                margin: 1em 0.5em;
+            }
     </style>
 </head>
 <body>
@@ -149,21 +208,30 @@
     <input type="button" value="submit" id="btn-handle"/>
 </div>
 
-<form action="../" method="post" enctype="application/x-www-form-urlencoded">
-    <label for="shout-box">message: </label> <input type="text" id="shout-box" value=""/>
-    <input type="button" value="send" id="btn-send"/>
-</form>
-
-<hr/>
-
-<div id="message-box">
-    <ul id="message-list">
-    </ul>
+<div id="header">
+    <h1>Chat.io</h1>
+    <p>A simple chat app powered by Node.js</p>
 </div>
 
-<ul id="loggedin-users">
-</ul>
+<div id="main-content">
 
+    <div id="input-box">
+        <form action="../" method="post" enctype="application/x-www-form-urlencoded">
+            <label for="shout-box">message: </label> <input type="text" id="shout-box" value=""/>
+            <input type="button" value="send" id="btn-send"/>
+        </form>
+    </div>
+
+    <hr/>
+
+    <div id="message-box">
+        <ul id="message-list">
+        </ul>
+    </div>
+
+    <ul id="loggedin-users">
+    </ul>
+</div>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -172,7 +240,6 @@
         $('input#handle').focus();
         $('input#btn-handle').click(function() {
             captureHandle();
-            ;
         });
 
         $('input#handle').keydown(function(event) {

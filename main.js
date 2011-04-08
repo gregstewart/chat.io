@@ -34,6 +34,17 @@ app.post('/user/new', function(req, res) {
 
 });
 
+app.get('/user/delete', function(req, res) {
+    var sessionid = req.body.sessionid;
+
+    userProvider.remove(
+        sessionid
+        , function(error, docs) {
+            res.send({error:error, user:docs});
+        }
+    );
+});
+
 app.listen(3000);
 
 chatSocket.start(userProvider);
