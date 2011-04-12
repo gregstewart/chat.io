@@ -49,6 +49,7 @@ function captureHandle() {
                     $('.modal-overLay').fadeOut(500);
                     insertMessage(you, 'has connected');
                     getLoggedInUsers();
+                    $('input#shout-box').focus();
                 }
             }
         });
@@ -92,11 +93,13 @@ function parseMessage(message) {
             case '/p':
                 parsed['type'] = 'party';
                 break;
-            case '/join ':
+            case '/join':
                 parsed['type'] = 'join';
                 break;
+            case '/leave':
+                parsed['type'] = 'leave';
+                break;
             default:
-
                 break;
         }
 
@@ -109,8 +112,16 @@ function parseMessage(message) {
 function sendMessage() {
     var message = $('input#shout-box').val();
     var parsedMessage = parseMessage(message);
-    insertMessage(you, parsedMessage['message'], parsedMessage['type']);
-    socket.send(parsedMessage['message'], parsedMessage['type']);
+
+    if (parsedMessage['type'] === 'join') {
+        console.log('join channel: ' + parsedMessage['message']);
+    } else if (parsedMessage['type'] === 'leave') {
+        console.log('leave channel: ' + parsedMessage['message']);
+    } else {
+        insertMessage(you, parsedMessage['message'], parsedMessage['type']);
+        socket.send(parsedMessage['message'], parsedMessage['type']);
+    }
+
 }
 
 function insertMessage(user, message, type) {
