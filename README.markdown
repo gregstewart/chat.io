@@ -12,7 +12,6 @@ To get start from the command line:
     cd chat.io
     sudo node main.js
 
-
 You might be prompted by your firewall that something is listening on port 8080, that's the node server. Finally open up a browser and go to [http://localhost:3000/](http://localhost:3000/), then open up another browser and type in a message and submit it, the message should appear in the first browser.
 
 To change the port of the server open up ChatSocket.js and look for:
