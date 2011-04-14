@@ -1,0 +1,36 @@
+# Settings file (YAML)
+---
+  development:
+    database:
+      adapter: mongodb
+      host: ''
+      port: 27017
+    express:
+      host: localhost
+      port: 3000
+    chat:
+      host: localhost
+      port: 8080
+  # borrowing from the rails convention
+  test:
+    database:
+      adapter: mongodb
+      host: ''
+      port: 27017
+    express:
+      host: localhost
+      port: 3000
+    chat:
+      host: localhost
+      port: 8080
+  production:
+    database:
+      adapter: mongodb
+      host: ''
+      port: 27017
+    express:
+      host: localhost
+      port: 3000
+    chat:
+      host: localhost
+      port: 8080

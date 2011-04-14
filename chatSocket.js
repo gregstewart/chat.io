@@ -1,6 +1,6 @@
 
 
-exports.start = function(user) {
+exports.start = function(user, port) {
 
     var http = require('http'); // http service
     var io = require('socket.io'); // for npm, otherwise use require('./path/to/socket.io')
@@ -11,7 +11,7 @@ exports.start = function(user) {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.end('');
     });
-    server.listen(8080);
+    server.listen(port);
 
     // socket.io
     var socket = io.listen(server);
