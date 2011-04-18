@@ -13,7 +13,7 @@ var SETTINGS = yaml.eval(fs.readFileSync('./config/settings.yml').toString()); /
 var env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
 
 try {
-    eval('SETTINGS.' + env +'.database.host')
+    SETTINGS[env]['database']['host'];
 } catch(e) {
     console.log('Invalid environment variable: ' + env);
     process.exit(1);
@@ -22,7 +22,7 @@ try {
 /**
  * Configure the user provider (mongodB connection for user data storage)
  */
-var userProvider = new UserProvider(eval('SETTINGS.' + env +'.database.host'), eval('SETTINGS.' + env + '.database.port'));
+var userProvider = new UserProvider(SETTINGS[env]['database']['host'], SETTINGS[env]['database']['port']);
 
 /**
  * Create the Express server for handling requests
@@ -77,9 +77,9 @@ app.get('/user/delete', function(req, res) {
 /**
  * Fire up the http server
  */
-app.listen(eval('SETTINGS.' + env + '.express.port'));
+app.listen(SETTINGS[env]['express']['port']);
 
 /**
  * Fire up the socket server
  */
-chatSocket.start(userProvider, eval('SETTINGS.' + env + '.chat.port'));
+chatSocket.start(userProvider, SETTINGS[env]['chat']['port']);
