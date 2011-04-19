@@ -77,7 +77,7 @@ function getLoggedInUsers() {
             } else if (response.users.length > 0) {
                 var users = response.users;
                 _.each(users,function(i) {
-                    $('ul#loggedin-users').append('<li>' + i.handle + '</li>');
+                    $('ul#loggedin-users').append('<li id="'+ i.sessionid +'">' + i.handle + '</li>');
                 });
             }
         }
@@ -133,7 +133,9 @@ function sendMessage() {
 function insertMessage(user, message, type) {
     var li = $('<li>' + user + ' ' + getFormattedDate() + ' : ' + message + '</li>');
 
-    if (typeof type !== 'undefined') {
+    if(type === 'disconnected') {
+        $('li#'+user).remove();
+    } else if (typeof type !== 'undefined') {
         li.addClass(type);
     }
 
@@ -147,7 +149,7 @@ if (isConnected) {
 
     socket.on('message', function(data) {
         data = JSON.parse(data);
-        insertMessage(data.id, data.message);
+        insertMessage(data.id, data.message, data.type);
     });
 
     socket.on('disconnect', function() {
