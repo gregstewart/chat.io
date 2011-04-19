@@ -30,6 +30,12 @@ function displayOverlay() {
     $('#login-container').fadeIn(500);
 }
 
+function logMessageToConsole(message) {
+    if (!$.browser.msie) {
+        console.log(message);
+    }
+}
+
 function captureHandle() {
     var handle = $('input#handle').val();
 
@@ -114,9 +120,9 @@ function sendMessage() {
     var parsedMessage = parseMessage(message);
 
     if (parsedMessage['type'] === 'join') {
-        console.log('join channel: ' + parsedMessage['message']);
+        logMessageToConsole('join channel: ' + parsedMessage['message']);
     } else if (parsedMessage['type'] === 'leave') {
-        console.log('leave channel: ' + parsedMessage['message']);
+        logMessageToConsole('leave channel: ' + parsedMessage['message']);
     } else {
         insertMessage(you, parsedMessage['message'], parsedMessage['type']);
         socket.send(parsedMessage['message'], parsedMessage['type']);
@@ -136,7 +142,7 @@ function insertMessage(user, message, type) {
 
 if (isConnected) {
     socket.on('connect', function(data) {
-        console.log('connect');
+        logMessageToConsole('connect')
     });
 
     socket.on('message', function(data) {
@@ -151,7 +157,7 @@ if (isConnected) {
             dataType: 'json',
             data: 'handle=' + you + '&sessionid=' + isConnected.transport.sessionid,
             success: function(response) {
-                console.log('disconnect');
+                logMessageToConsole('disconnect');
             }
         });
     });
