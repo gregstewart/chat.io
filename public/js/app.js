@@ -119,6 +119,8 @@ function sendMessage() {
     var message = $('input#shout-box').val();
     var parsedMessage = parseMessage(message);
 
+    $('input#shout-box').val('');
+
     if (parsedMessage['type'] === 'join') {
         logMessageToConsole('join channel: ' + parsedMessage['message']);
     } else if (parsedMessage['type'] === 'leave') {
@@ -139,7 +141,7 @@ function insertMessage(user, message, type) {
         li.addClass(type);
     }
 
-    $('ul#message-list').prepend(li);
+    $('ul#message-list').append(li);
 }
 
 if (isConnected) {
