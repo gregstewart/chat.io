@@ -55,6 +55,7 @@ function captureHandle() {
                     $('.modal-overLay').fadeOut(500);
                     insertMessage(you, 'has connected');
                     getLoggedInUsers();
+                    getChannels();
                     $('input#shout-box').focus();
                 }
             }
@@ -73,7 +74,7 @@ function getLoggedInUsers() {
         success: function(response) {
 
             if (response.error !== null) {
-                alert('There\'s been an error, sorry unable to store handle');
+                alert('There\'s been an error, sorry unable to get logged in users');
             } else if (response.users.length > 0) {
                 var users = response.users;
                 _.each(users,function(i) {
@@ -82,6 +83,49 @@ function getLoggedInUsers() {
             }
         }
     });
+}
+
+function getChannels() {
+    $.ajax({
+        type: 'get',
+        url: '/channel/',
+        dataType: 'json',
+        success: function(response) {
+
+            if (response.error !== null) {
+                alert('There\'s been an error, sorry unable to get channels');
+            } else if (response.channels.length > 0) {
+                $('ul#available-channels').children().remove();
+                var channels = response.channels;
+                _.each(channels,function(i) {
+                    $('ul#available-channels').append('<li id="'+ i._id +'">' + i.channel + '</li>');
+                });
+            }
+        }
+    });
+}
+
+function createChannel() {
+    var channel = $('input#custom-channel-box').val();
+
+    if (channel !== '') {
+        $.ajax({
+            type: 'post',
+            url: '/channel/new',
+            data: 'channel=' + channel + '&sessionid=' + isConnected.transport.sessionid,
+            dataType: 'json',
+            success: function(response) {
+                if (response.error !== null) {
+                    alert('There\'s been an error, sorry unable to store channel: ' + response.error);
+                } else {
+                    getChannels();
+                }
+            }
+        });
+
+    } else {
+        alert('Please enter a channel name.');
+    }
 }
 
 function parseMessage(message) {

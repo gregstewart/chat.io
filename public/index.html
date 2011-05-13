@@ -58,6 +58,16 @@
                 font-weight: bold;
             }
 
+            #main-content #channel-box {
+                margin: 1em 0.5em;
+                padding: 1em;
+                background-color: #69D2E7;
+                border-bottom: 2px solid #A7DBD8;
+                color: #E0E4CC;
+                font-size: 1em;
+                font-weight: bold;
+            }
+
             #main-content hr {
                 margin: 1em 0.5em;
                 background-color: #69D2E7;
@@ -73,6 +83,7 @@
                 background: #E0E4CC;
             }
 
+            
             #main-content #message-box ul#message-list {
                 list-style: none;
                 margin: 0;
@@ -84,6 +95,23 @@
 
                 #main-content #message-box ul#message-list li.party {
                     color: #69D2E7;
+                }
+            #main-content h2 {
+                margin: 0.5em 0.25em;
+                color: #F38630;
+            }
+
+            #main-content ul#loggedin-users {
+                list-style: none;
+                display: inline;
+                margin: 0;
+                padding: 0;
+            }
+                #main-content ul#loggedin-users li {
+                    list-style: none;
+                    display: inline;
+                    margin: 5px;
+                    color: #F38630;
                 }
     </style>
 </head>
@@ -107,6 +135,17 @@
             <label for="shout-box">message: </label> <input type="text" id="shout-box" value=""/>
             <input type="submit" value="send" id="btn-send"/>
         </form>
+        <p>To join a channel type /join channel</p>
+    </div>
+
+    <h2 id="channel-header">Channels</h2>
+    <div id="channel-box">
+        <form action="../" method="post" enctype="application/x-www-form-urlencoded">
+            <label for="custom-channel-box">channel: </label> <input type="text" id="custom-channel-box" value=""/>
+            <input type="submit" value="create" id="btn-send-channel"/>
+        </form>
+        <h3>Available channels</h3>
+        <ul id="available-channels"></ul>
     </div>
 
     <hr/>
@@ -115,13 +154,14 @@
         <ul id="message-list">
         </ul>
     </div>
-
+    <h2>Users</h2>
     <ul id="loggedin-users">
     </ul>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function() {
+        $('div#channel-box').hide();
         displayOverlay();
 
         $('input#handle').focus();
@@ -145,6 +185,22 @@
             if (event.keyCode == '13') {
                 event.preventDefault();
                 sendMessage();
+            }
+        });
+
+        $('h2#channel-header').click(function(event) {
+            $('div#channel-box').toggle();
+        });
+
+        $('input#btn-send-channel').click(function(event) {
+            event.preventDefault();
+            createChannel();
+        });
+
+        $('input#custom-channel-box').keydown(function(event) {
+            if (event.keyCode == '13') {
+                event.preventDefault();
+                createChannel();
             }
         });
     });

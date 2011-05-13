@@ -4,7 +4,9 @@
  * Set up a bunch of required modules
  */
 var chatSocket = require('./ChatSocket');
+var DatabaseProvider = require('./DatabaseProvider').DatabaseProvider;
 var UserProvider = require('./UserProvider').UserProvider;
+var ChannelProvider = require('./ChannelProvider').ChannelProvider;
 var express = require('express');
 var yaml = require('yaml');
 var fs = require('fs'); // file system module
@@ -22,7 +24,9 @@ try {
 /**
  * Configure the user provider (mongodB connection for user data storage)
  */
-var userProvider = new UserProvider(SETTINGS[env]['database']['host'], SETTINGS[env]['database']['port']);
+var databaseProvider = new DatabaseProvider(SETTINGS[env]['database']['host'], SETTINGS[env]['database']['port']);
+var userProvider = new UserProvider(databaseProvider);
+var channelProvider = new ChannelProvider(databaseProvider);
 
 /**
  * Create the Express server for handling requests
@@ -46,6 +50,7 @@ app.get('/', function(req, res) {
     res.end(indexFile);
 });
 
+/* USERS */
 app.get('/user/', function(req, res) {
    userProvider.findAll(function(error, results) {
        res.send({error:error, users:results});
@@ -71,6 +76,22 @@ app.get('/user/delete', function(req, res) {
             res.send({error:error, user:docs});
         }
     );
+});
+
+/* CHANNELS */
+app.get('/channel/', function(req, res) {
+   channelProvider.findAll(function(error, results) {
+       res.send({error:error, channels:results});
+    });
+});
+
+app.post('/channel/new', function(req, res) {
+    channelProvider.save({
+        channel: req.body.channel,
+        sessionid: req.body.sessionid
+    }, function(error, docs) {
+        res.send({error:error, channel:docs});
+    });
 });
 
 
