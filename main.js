@@ -86,9 +86,23 @@ app.get('/channel/', function(req, res) {
 });
 
 app.post('/channel/new', function(req, res) {
+    // important, since we are storing users belonging to a channel as an array we must initialise
+    // the field as an array! Else we can push to it
+    var users = [];
+    users.push(req.body.sessionid);
+    console.log(users);
     channelProvider.save({
         channel: req.body.channel,
-        sessionid: req.body.sessionid
+        users: users
+    }, function(error, docs) {
+        res.send({error:error, channel:docs});
+    });
+});
+
+app.post('/channel/join', function(req, res) {
+    channelProvider.joinChannel({
+        channel: req.body.channel,
+        user: req.body.sessionid
     }, function(error, docs) {
         res.send({error:error, channel:docs});
     });

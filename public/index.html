@@ -67,6 +67,9 @@
                 font-size: 1em;
                 font-weight: bold;
             }
+                #main-content #channel-box li {
+                    text-decoration: underline;
+                }
 
             #main-content hr {
                 margin: 1em 0.5em;
@@ -203,6 +206,8 @@
                 createChannel();
             }
         });
+
+        $('ul#available-channels').click(joinChannel);
     });
 </script>
 

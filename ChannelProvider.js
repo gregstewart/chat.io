@@ -5,6 +5,7 @@
  * Time: 12:24 PM
  * To change this template use File | Settings | File Templates.
  */
+var ObjectID = require('mongodb/lib/mongodb/bson/bson').ObjectID;
 ChannelProvider = function(db) {
     this.db = db;
 };
@@ -52,28 +53,32 @@ ChannelProvider.prototype.save = function(channels, callback) {
                     console.log('here');
                     channel = channels[i];
                     channel.created_at = new Date();
+
+                    if (channel.users === undefined) {
+                        channel.users = [];
+                    }
+
+                    for (var j = 0; j < channel.users.length; j++) {
+                        channel.users[j].created_at = new Date();
+                    }
                 }
 
 
                 channel_collection.findOne({'channel':channel.channel}, function(error, result) {
-                   if (error) {
-                       callback(error);
-                   } else {
-                       console.log(result);
+                    if (error) {
+                        callback(error);
+                    } else {
+                        console.log(result);
 
-                       if (typeof(result) === 'undefined')
-                       {
-                           channel_collection.insert(channels, function() {
-                               callback(null, channels);
-                           });
-                       } else {
-                           callback('channel exists', channels);
-                       }
-                   }
+                        if (typeof(result) === 'undefined') {
+                            channel_collection.insert(channels, function() {
+                                callback(null, channels);
+                            });
+                        } else {
+                            callback('channel exists', channels);
+                        }
+                    }
                 });
-               
-
-
 
             }
 
@@ -82,21 +87,50 @@ ChannelProvider.prototype.save = function(channels, callback) {
     });
 };
 
+ChannelProvider.prototype.joinChannel = function(object, callback) {
+
+    var channelId = object.channel;
+    var user = object.user;
+    console.log(object);
+    this.getCollection(function(error, channel_collection) {
+        if (error) {
+            callback(error);
+        } else {
+            
+            channel_collection.findAndModify(
+                {_id: ObjectID.createFromHexString(channelId)},
+                [['_id','asc']],
+                {"$push": {users: user}},
+                {},
+                function(error, channel) {
+                    if (error) {
+                        callback(error);
+                    } else {
+                        console.log(channel);
+                        callback(null, channel);
+
+                    }
+                }
+            );
+        }
+    });
+};
+
 ChannelProvider.prototype.findByChannel = function(name, callback) {
     this.getCollection(function(error, channel_collection) {
-      if( error ) {
-          callback(error);
-      } else {
-        channel_collection.findOne({channel: name}, function(error, result) {
-          if( error ) {
-              console.log(error);
-              callback(error);
-          } else {
-              console.log(result);
-              callback(null, result);
-          }
-        });
-      }
+        if (error) {
+            callback(error);
+        } else {
+            channel_collection.findOne({channel: name}, function(error, result) {
+                if (error) {
+                    console.log(error);
+                    callback(error);
+                } else {
+                    console.log(result);
+                    callback(null, result);
+                }
+            });
+        }
     });
 };
 

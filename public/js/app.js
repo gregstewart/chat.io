@@ -118,6 +118,7 @@ function createChannel() {
                 if (response.error !== null) {
                     alert('There\'s been an error, sorry unable to store channel: ' + response.error);
                 } else {
+                    insertMessage(you, "Joined channel " + channel);
                     getChannels();
                 }
             }
@@ -126,6 +127,27 @@ function createChannel() {
     } else {
         alert('Please enter a channel name.');
     }
+}
+
+function joinChannel(e) {
+    $.ajax({
+        type: 'post',
+        url: '/channel/join',
+        data: 'channel=' + e.target.id + '&sessionid=' + isConnected.transport.sessionid,
+        dataType: 'json',
+        success: function(response) {
+            if (response.error !== null) {
+                alert('Unable to join channel: ' + response.error);
+            } else {
+                insertMessage(you, "Joined channel " + response.channel.channel);
+                notifyChannel(response.channel._id);
+            }
+        }
+    });
+}
+
+function notifyChannel(id) {
+
 }
 
 function parseMessage(message) {
@@ -171,7 +193,7 @@ function sendMessage() {
         logMessageToConsole('leave channel: ' + parsedMessage['message']);
     } else {
         insertMessage(you, parsedMessage['message'], parsedMessage['type']);
-        socket.send(parsedMessage['message'], parsedMessage['type']);
+        socket.send(parsedMessage);
     }
 
 }

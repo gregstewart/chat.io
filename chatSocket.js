@@ -25,11 +25,18 @@ exports.start = function(user, port) {
 
         client.on('message', function(message) {
             var request = {};
-            request.message = message;
-            request.type = 'shout';
+            console.log(message);
+            request.message = message.message;
+            request.type = message.type;
             request.id = client.sessionId;
-            //client.send(json(request)); tell like mechanism
-            client.broadcast(json(request));
+
+            if (request.type === 'channel' && (typeof(message.channelId) !== 'undefined')) {
+                client.broadcast(json(request),[12344534]);
+            } else if (request.type === 'tell') {
+                //client.send(json(request)); tell like mechanism
+            } else {
+                client.broadcast(json(request));
+            }
         });
 
         client.on('disconnect', function() {
