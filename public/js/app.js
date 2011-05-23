@@ -174,6 +174,7 @@ function parseMessage(message) {
                 parsed['type'] = 'leave';
                 break;
             default:
+                parsed['type'] = 'chat';
                 break;
         }
 
