@@ -68,14 +68,28 @@ app.post('/user/new', function(req, res) {
 });
 
 app.get('/user/delete', function(req, res) {
-    var sessionid = req.body.sessionid;
+    if (typeof(req.body.sessionid) !== 'undefined' || req.body.sessionid !== null) {
 
-    userProvider.remove(
-        sessionid
-        , function(error, docs) {
-            res.send({error:error, user:docs});
-        }
-    );
+        userProvider.remove(
+            req.body.sessionid
+            , function(error, docs) {
+                res.send({error:error, user:docs});
+            }
+        );
+    } else {
+        userProvider.getByHandle(
+            req.body.handle
+            , function(error, docs) {
+                userProvider.remove(
+                    docs.sessionid
+                    , function(error, docs) {
+                        res.send({error:error, user:docs});
+                    }
+                );
+                
+            }
+        );
+    }
 });
 
 /* CHANNELS */

@@ -54,12 +54,46 @@ UserProvider.prototype.save = function(users, callback) {
     });
 };
 
-UserProvider.prototype.remove = function(id, callback) {
+UserProvider.prototype.get = function(id, callback) {
     this.getCollection(function(error, user_collection) {
         if (error) {
             callback(error);
         } else {
             if (typeof(id) !== 'undefined') {
+                user_collection.findOne({'sessionid':id}, function(error, result) {
+                    callback(null, result);
+                });
+            }
+
+
+        }
+    });
+};
+
+UserProvider.prototype.getByHandle = function(handle, callback) {
+    this.getCollection(function(error, user_collection) {
+        if (error) {
+            callback(error);
+        } else {
+            if (typeof(handle) !== 'undefined') {
+                console.log('deletion by handle');
+                user_collection.findOne({'handle':handle}, function(error, result) {
+                    callback(null, result);
+                });
+            }
+
+
+        }
+    });
+};
+
+UserProvider.prototype.remove = function(id, callback) {
+    this.getCollection(function(error, user_collection) {
+        if (error) {
+            callback(error);
+        } else {
+            if (typeof(id) !== 'undefined' || id !== null) {
+                console.log('deletion by id');
                 user_collection.remove({'sessionid':id}, function() {
                     callback(null, 'User deleted');
                 });

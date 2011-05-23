@@ -19,7 +19,6 @@ exports.start = function(user, port) {
         // new client is here!
         var request = {};
         request.id = client.sessionId;
-        request.type = 'connected';
         request.message = ' has connected';
         client.broadcast(json(request));
 
@@ -29,12 +28,20 @@ exports.start = function(user, port) {
             request.message = message.message;
             request.type = message.type;
             request.id = client.sessionId;
+            request.user = typeof(message.user) !== 'undefined'?message.user:null;
 
             if (request.type === 'channel' && (typeof(message.channelId) !== 'undefined')) {
+                console.log('channel');
                 client.broadcast(json(request),[12344534]);
             } else if (request.type === 'tell') {
+                console.log('tell');
                 //client.send(json(request)); tell like mechanism
             } else {
+                if(typeof(message.type) === 'undefined') {
+                    request.type = 'connected';
+                }
+
+                console.log('broadcast');
                 client.broadcast(json(request));
             }
         });
@@ -49,10 +56,23 @@ exports.start = function(user, port) {
     });
 
     function deleteUser(id) {
+        console.log('here'); 
         user.remove(id, function(error, doc) {
             if (error !== null) {
                 console.log('there\'s been an error deleting the user: ' + error);
             }
+        });
+    }
+
+    function getUser(id) {
+        user.get(id, function(error, doc) {
+           if (error !== null) {
+               console.log('Unable to find handle for session id: ' + id);
+               return id;
+           } else {
+               console.log(doc);
+               //return doc.handle;
+           }
         });
     }
 }

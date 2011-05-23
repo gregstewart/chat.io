@@ -1,6 +1,7 @@
 var socket = new io.Socket('localhost', {port: 8080});
 var isConnected = socket.connect();
 var you = '';
+var loggedInUsers = [];
 
 function getFormattedDate() {
     var date = new Date();
@@ -54,6 +55,7 @@ function captureHandle() {
                     $('#login-container').hide();
                     $('.modal-overLay').fadeOut(500);
                     insertMessage(you, 'has connected');
+                    socket.send({message: ' has connected', user: you});
                     getLoggedInUsers();
                     getChannels();
                     $('input#shout-box').focus();
@@ -76,8 +78,8 @@ function getLoggedInUsers() {
             if (response.error !== null) {
                 alert('There\'s been an error, sorry unable to get logged in users');
             } else if (response.users.length > 0) {
-                var users = response.users;
-                _.each(users,function(i) {
+                loggedInUsers = response.users;
+                _.each(loggedInUsers,function(i) {
                     $('ul#loggedin-users').append('<li id="'+ i.sessionid +'">' + i.handle + '</li>');
                 });
             }
@@ -217,7 +219,13 @@ if (isConnected) {
 
     socket.on('message', function(data) {
         data = JSON.parse(data);
-        insertMessage(data.id, data.message, data.type);
+        console.log(data);
+        if (data.type !== 'connected') {
+            var user = typeof(data.user) !== 'undefined'?data.user:null;
+            insertMessage(data.id, data.message, data.type, user);
+        } else {
+            getLoggedInUsers();
+        }
     });
 
     socket.on('disconnect', function() {
