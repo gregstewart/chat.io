@@ -83,6 +83,7 @@ function getLoggedInUsers() {
                 alert('There\'s been an error, sorry unable to get logged in users');
             } else if (response.users.length > 0) {
                 loggedInUsers = response.users;
+                $('ul#loggedin-users').children().remove();
                 _.each(loggedInUsers,function(i) {
                     $('ul#loggedin-users').append('<li id="'+ i.sessionid +'">' + i.handle + '</li>');
                 });
@@ -230,7 +231,7 @@ function getHandle(id) {
 }
 
 function insertMessage(response) {
-    var handle = (response.user !== null)?response.user:getHandle(response.id);
+    var handle = (response.user !== null) ? response.user:getHandle(response.id);
     var li = $('<li>' + handle + ' ' + getFormattedDate() + ' : ' + response.message + '</li>');
 
     if(response.type === 'disconnected') {
