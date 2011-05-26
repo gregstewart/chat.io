@@ -52,9 +52,13 @@ function captureHandle() {
                 if (response.error !== null) {
                     alert('There\'s been an error, sorry unable to store handle');
                 } else {
+                    mockResponse = {};
+                    mockResponse.user = you;
+                    mockResponse.message = 'has connected';
+                    mockResponse.type = 'connected';
                     $('#login-container').hide();
                     $('.modal-overLay').fadeOut(500);
-                    insertMessage(you, 'has connected');
+                    insertMessage(mockResponse);
                     socket.send({message: ' has connected', user: you});
                     getLoggedInUsers();
                     getChannels();
@@ -120,7 +124,11 @@ function createChannel() {
                 if (response.error !== null) {
                     alert('There\'s been an error, sorry unable to store channel: ' + response.error);
                 } else {
-                    insertMessage(you, "Joined channel " + channel);
+                    mockResponse = {};
+                    mockResponse.user = you;
+                    mockResponse.message = 'Joined channel ' + channel;
+                    mockResponse.type = 'joined';
+                    insertMessage(mockResponse);
                     getChannels();
                 }
             }
@@ -141,7 +149,11 @@ function joinChannel(e) {
             if (response.error !== null) {
                 alert('Unable to join channel: ' + response.error);
             } else {
-                insertMessage(you, "Joined channel " + response.channel.channel);
+                mockResponse = {};
+                mockResponse.user = you;
+                mockResponse.message = 'Joined channel ' + response.channel.channel;
+                mockResponse.type = 'joined';
+                insertMessage(mockResponse);
                 notifyChannel(response.channel._id);
             }
         }
@@ -195,19 +207,36 @@ function sendMessage() {
     } else if (parsedMessage['type'] === 'leave') {
         logMessageToConsole('leave channel: ' + parsedMessage['message']);
     } else {
-        insertMessage(you, parsedMessage['message'], parsedMessage['type']);
+        mockResponse = {};
+        mockResponse.user = you;
+        mockResponse.message = parsedMessage['message'];
+        mockResponse.type = parsedMessage['type'];
+        insertMessage(mockResponse);
         socket.send(parsedMessage);
     }
 
 }
 
-function insertMessage(user, message, type) {
-    var li = $('<li>' + user + ' ' + getFormattedDate() + ' : ' + message + '</li>');
+function getHandle(id) {
+    var handle = id;
+    _.each(loggedInUsers,function(i) {
+        if (i.sessionid == id) {
+            handle = i.handle;
+            return false;
+        }
+    });
 
-    if(type === 'disconnected') {
-        $('li#'+user).remove();
-    } else if (typeof type !== 'undefined') {
-        li.addClass(type);
+    return handle;
+}
+
+function insertMessage(response) {
+    var handle = (response.user !== null)?response.user:getHandle(response.id);
+    var li = $('<li>' + handle + ' ' + getFormattedDate() + ' : ' + response.message + '</li>');
+
+    if(response.type === 'disconnected') {
+        $('li#'+response.id).remove();
+    } else if (typeof(response.type) !== 'undefined') {
+        li.addClass(response.type);
     }
 
     $('ul#message-list').append(li);
@@ -222,8 +251,7 @@ if (isConnected) {
         data = JSON.parse(data);
         console.log(data);
         if (data.type !== 'connected') {
-            var user = typeof(data.user) !== 'undefined'?data.user:null;
-            insertMessage(data.id, data.message, data.type, user);
+            insertMessage(data);
         } else {
             getLoggedInUsers();
         }
