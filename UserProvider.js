@@ -39,7 +39,7 @@ UserProvider.prototype.save = function(users, callback) {
         if (error) {
             callback(error);
         } else {
-            if (typeof(users.length) === "undefined") {
+            if (typeof users.length === "undefined") {
                 users = [users];
                 for (var i = 0; i < users.length; i++) {
                     user = users[i];
@@ -59,7 +59,7 @@ UserProvider.prototype.get = function(id, callback) {
         if (error) {
             callback(error);
         } else {
-            if (typeof(id) !== 'undefined') {
+            if (typeof id !== 'undefined') {
                 user_collection.findOne({'sessionid':id}, function(error, result) {
                     callback(null, result);
                 });
@@ -75,7 +75,7 @@ UserProvider.prototype.getByHandle = function(handle, callback) {
         if (error) {
             callback(error);
         } else {
-            if (typeof(handle) !== 'undefined') {
+            if (typeof handle !== 'undefined') {
                 console.log('deletion by handle');
                 user_collection.findOne({'handle':handle}, function(error, result) {
                     callback(null, result);
@@ -92,7 +92,7 @@ UserProvider.prototype.remove = function(id, callback) {
         if (error) {
             callback(error);
         } else {
-            if (typeof(id) !== 'undefined' || id !== null) {
+            if (typeof id !== 'undefined' || id !== null) {
                 console.log('deletion by id');
                 user_collection.remove({'sessionid':id}, function() {
                     callback(null, 'User deleted');

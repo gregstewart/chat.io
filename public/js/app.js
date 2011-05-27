@@ -125,6 +125,10 @@ function createChannel() {
                 if (response.error !== null) {
                     alert('There\'s been an error, sorry unable to store channel: ' + response.error);
                 } else {
+                    var message = {};
+                    message.type = 'channel created';
+                    message.message = 'new channel created';
+                    socket.send(message);
                     mockResponse = {};
                     mockResponse.user = you;
                     mockResponse.message = 'Joined channel ' + channel;
@@ -199,21 +203,22 @@ function parseMessage(message) {
 
 function sendMessage() {
     var message = $('input#shout-box').val();
-    var parsedMessage = parseMessage(message);
+    var request = parseMessage(message);
 
     $('input#shout-box').val('');
 
-    if (parsedMessage['type'] === 'join') {
-        logMessageToConsole('join channel: ' + parsedMessage['message']);
-    } else if (parsedMessage['type'] === 'leave') {
-        logMessageToConsole('leave channel: ' + parsedMessage['message']);
+    if (request['type'] === 'join') {
+        logMessageToConsole('join channel: ' + request['message']);
+    } else if (request['type'] === 'leave') {
+        logMessageToConsole('leave channel: ' + request['message']);
     } else {
         mockResponse = {};
         mockResponse.user = you;
-        mockResponse.message = parsedMessage['message'];
-        mockResponse.type = parsedMessage['type'];
+        mockResponse.message = request['message'];
+        mockResponse.type = request['type'];
         insertMessage(mockResponse);
-        socket.send(parsedMessage);
+        request.user = you;
+        socket.send(request);
     }
 
 }
@@ -231,12 +236,12 @@ function getHandle(id) {
 }
 
 function insertMessage(response) {
-    var handle = (response.user !== null) ? response.user:getHandle(response.id);
+    var handle = (response.user !== null && typeof response.user !== 'undefined') ? response.user:getHandle(response.id);
     var li = $('<li>' + handle + ' ' + getFormattedDate() + ' : ' + response.message + '</li>');
 
     if(response.type === 'disconnected') {
         $('li#'+response.id).remove();
-    } else if (typeof(response.type) !== 'undefined') {
+    } else if (typeof response.type !== 'undefined') {
         li.addClass(response.type);
     }
 
@@ -253,15 +258,23 @@ if (isConnected) {
         console.log(data);
         if (data.type !== 'connected') {
             insertMessage(data);
+            console.log('message');
+
+        } else if (data.type !== 'channel created') {
+            getChannels();
+            console.log('channel');
+
         } else {
             getLoggedInUsers();
+            console.log('load users');
+
         }
     });
 
     socket.on('disconnect', function() {
         $.ajax({
             type: 'get',
-            url: '/delete/',
+            url: '/user/delete/',
             dataType: 'json',
             data: 'handle=' + you + '&sessionid=' + isConnected.transport.sessionid,
             success: function(response) {

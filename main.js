@@ -68,7 +68,7 @@ app.post('/user/new', function(req, res) {
 });
 
 app.get('/user/delete', function(req, res) {
-    if (typeof(req.body.sessionid) !== 'undefined' || req.body.sessionid !== null) {
+    if (typeof req.body.sessionid !== 'undefined' || req.body.sessionid !== null) {
 
         userProvider.remove(
             req.body.sessionid

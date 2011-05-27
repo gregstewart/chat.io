@@ -28,20 +28,21 @@ exports.start = function(user, port) {
             request.message = message.message;
             request.type = message.type;
             request.id = client.sessionId;
-            request.user = typeof(message.user) !== 'undefined'?message.user:null;
+            request.user = typeof message.user !== 'undefined'?message.user:null;
 
-            if (request.type === 'channel' && (typeof(message.channelId) !== 'undefined')) {
+            if (request.type === 'channel' && (typeof message.channelId !== 'undefined')) {
                 console.log('channel');
                 client.broadcast(json(request),[12344534]);
             } else if (request.type === 'tell') {
                 console.log('tell');
                 //client.send(json(request)); tell like mechanism
             } else {
-                if(typeof(message.type) === 'undefined') {
+                console.log('broadcast');
+                
+                if(typeof message.type === 'undefined') {
                     request.type = 'connected';
                 }
 
-                console.log('broadcast');
                 client.broadcast(json(request));
             }
         });

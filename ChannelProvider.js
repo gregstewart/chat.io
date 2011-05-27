@@ -47,10 +47,9 @@ ChannelProvider.prototype.save = function(channels, callback) {
         if (error) {
             callback(error);
         } else {
-            if (typeof(channels.length) === "undefined") {
+            if (typeof channels.length === 'undefined') {
                 channels = [channels];
                 for (var i = 0; i < channels.length; i++) {
-                    console.log('here');
                     channel = channels[i];
                     channel.created_at = new Date();
 
@@ -68,9 +67,7 @@ ChannelProvider.prototype.save = function(channels, callback) {
                     if (error) {
                         callback(error);
                     } else {
-                        console.log(result);
-
-                        if (typeof(result) === 'undefined') {
+                        if (typeof result === 'undefined') {
                             channel_collection.insert(channels, function() {
                                 callback(null, channels);
                             });
@@ -139,7 +136,7 @@ ChannelProvider.prototype.remove = function(id, callback) {
         if (error) {
             callback(error);
         } else {
-            if (typeof(id) !== 'undefined') {
+            if (typeof id !== 'undefined') {
                 channel_collection.remove({'sessionid':id}, function() {
                     callback(null, 'channel deleted');
                 });
