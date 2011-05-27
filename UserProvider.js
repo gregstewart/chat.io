@@ -1,3 +1,5 @@
+var _ = require("underscore")
+
 UserProvider = function(db) {
     this.db = db;
 };
@@ -98,10 +100,24 @@ UserProvider.prototype.remove = function(id, callback) {
                     callback(null, 'User deleted');
                 });
             }
-
-
         }
     });
 };
+
+UserProvider.prototype.getExcludedUsers = function(users, callback) {
+    this.findAll(function(error, dbUsers) {
+        if (error) {
+            callback(error);
+        } else {
+            var usersToBeExcluded = _.pluck(dbUsers, 'sessionid');
+            
+            for (var i = 0; i < users.length; i++) {
+               usersToBeExcluded = _.without(usersToBeExcluded,users[i]);
+            }
+            
+            callback(error, usersToBeExcluded);
+        }
+    });
+}
 
 exports.UserProvider = UserProvider;

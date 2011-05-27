@@ -104,7 +104,6 @@ app.post('/channel/new', function(req, res) {
     // the field as an array! Else we can push to it
     var users = [];
     users.push(req.body.sessionid);
-    console.log(users);
     channelProvider.save({
         channel: req.body.channel,
         users: users
@@ -131,4 +130,4 @@ app.listen(SETTINGS[env]['express']['port']);
 /**
  * Fire up the socket server
  */
-chatSocket.start(userProvider, SETTINGS[env]['chat']['port']);
+chatSocket.start(userProvider, channelProvider, SETTINGS[env]['chat']['port']);

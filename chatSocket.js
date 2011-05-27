@@ -1,6 +1,6 @@
 
 
-exports.start = function(user, port) {
+exports.start = function(user, channel, port) {
 
     var http = require('http'); // http service
     var io = require('socket.io'); // for npm, otherwise use require('./path/to/socket.io')
@@ -31,8 +31,22 @@ exports.start = function(user, port) {
             request.user = typeof message.user !== 'undefined'?message.user:null;
 
             if (request.type === 'channel' && (typeof message.channelId !== 'undefined')) {
-                console.log('channel');
-                client.broadcast(json(request),[12344534]);
+                channel.findByChannel(message.channelId, function(error, doc) {
+                    if (error !== null) {
+                        console.log('there\'s been an error finding the channel: ' + error);
+                    }
+
+                    if (doc !== null && doc.users.length) {
+                        console.log(doc.users)
+                        user.getExcludedUsers(doc.users, function(error, excludedUsers){
+                            if (error !== null) {
+                                console.log('Problem getting excluded users');
+                            } else {
+                                socket.broadcast(json(request),excludedUsers);
+                            }
+                        });
+                    }
+                });
             } else if (request.type === 'tell') {
                 console.log('tell');
                 //client.send(json(request)); tell like mechanism

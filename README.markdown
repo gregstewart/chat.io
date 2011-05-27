@@ -6,8 +6,9 @@ To get started [install node.js](https://github.com/joyent/node/wiki/Installatio
  * [expressjs](http://expressjs.com/)
  * [mongodb](https://github.com/christkv/node-mongodb-native/) - use `npm install mongodb@0.9.2`
  * [yaml](https://github.com/visionmedia/js-yaml)
+ * [underscore](http://documentcloud.github.com/underscore/)
 
-To get start from the command line:
+ To get start from the command line:
 
     git clone https://github.com/gregstewart/chat.io.git
     cd chat.io
@@ -68,5 +69,7 @@ To change the appearance of the "UI" simply edit the index.html file.
 I have added [expressjs](http://expressjs.com/) and [mongoDB](http://www.mongodb.org/) to capture user names in a database (for display purposes and for kicks really).
 
 I have added [yaml](https://github.com/visionmedia/js-yaml), so that a configuration file can be read on start up. Specifying an invalid **NODE_ENV**, will cause the application to log an exception and just halt. 
+
+I have added [underscore](http://documentcloud.github.com/underscore/), for array functions.
 
 by [Greg Stewart](http://gregs.tcias.co.uk/)

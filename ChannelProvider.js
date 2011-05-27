@@ -62,7 +62,6 @@ ChannelProvider.prototype.save = function(channels, callback) {
                     }
                 }
 
-
                 channel_collection.findOne({'channel':channel.channel}, function(error, result) {
                     if (error) {
                         callback(error);
@@ -76,10 +75,7 @@ ChannelProvider.prototype.save = function(channels, callback) {
                         }
                     }
                 });
-
             }
-
-
         }
     });
 };
@@ -88,7 +84,6 @@ ChannelProvider.prototype.joinChannel = function(object, callback) {
 
     var channelId = object.channel;
     var user = object.user;
-    console.log(object);
     this.getCollection(function(error, channel_collection) {
         if (error) {
             callback(error);
@@ -103,7 +98,6 @@ ChannelProvider.prototype.joinChannel = function(object, callback) {
                     if (error) {
                         callback(error);
                     } else {
-                        console.log(channel);
                         callback(null, channel);
 
                     }
@@ -113,17 +107,15 @@ ChannelProvider.prototype.joinChannel = function(object, callback) {
     });
 };
 
-ChannelProvider.prototype.findByChannel = function(name, callback) {
+ChannelProvider.prototype.findByChannel = function(id, callback) {
     this.getCollection(function(error, channel_collection) {
         if (error) {
             callback(error);
         } else {
-            channel_collection.findOne({channel: name}, function(error, result) {
+            channel_collection.findOne({ _id: ObjectID.createFromHexString(id) }, function(error, result) {
                 if (error) {
-                    console.log(error);
                     callback(error);
                 } else {
-                    console.log(result);
                     callback(null, result);
                 }
             });
@@ -137,7 +129,7 @@ ChannelProvider.prototype.remove = function(id, callback) {
             callback(error);
         } else {
             if (typeof id !== 'undefined') {
-                channel_collection.remove({'sessionid':id}, function() {
+                channel_collection.remove( { _id: ObjectID.createFromHexString(id) }, function() {
                     callback(null, 'channel deleted');
                 });
             }

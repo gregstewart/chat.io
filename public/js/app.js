@@ -2,6 +2,7 @@ var socket = new io.Socket('localhost', {port: 8080});
 var isConnected = socket.connect();
 var you = '';
 var loggedInUsers = [];
+var belongsToChannel = [];
 
 function getFormattedDate() {
     var date = new Date();
@@ -133,6 +134,7 @@ function createChannel() {
                     mockResponse.user = you;
                     mockResponse.message = 'Joined channel ' + channel;
                     mockResponse.type = 'joined';
+                    belongsToChannel.push({'id': response.channel[0]._id, 'name': response.channel[0].channel});
                     insertMessage(mockResponse);
                     getChannels();
                 }
@@ -158,6 +160,7 @@ function joinChannel(e) {
                 mockResponse.user = you;
                 mockResponse.message = 'Joined channel ' + response.channel.channel;
                 mockResponse.type = 'joined';
+                belongsToChannel.push({'id': response.channel._id, 'name': response.channel.channel});
                 insertMessage(mockResponse);
                 notifyChannel(response.channel._id);
             }
@@ -170,7 +173,7 @@ function notifyChannel(id) {
 }
 
 function parseMessage(message) {
-    var match = message.match(/\/[a-z]*|[0-9]/);
+    var match = message.match(/\/[a-z0-9]*/);
     var parsed = {};
 
     parsed['type'] = 'default';
@@ -191,7 +194,15 @@ function parseMessage(message) {
                 parsed['type'] = 'leave';
                 break;
             default:
-                parsed['type'] = 'chat';
+                var channel = match[0].match(/[0-9]/);
+                if (channel.length && belongsToChannel.length >= 1) {
+                    var channelDetails = belongsToChannel[channel[0]-1];
+                    parsed['type'] = 'channel';
+                    parsed['channelId'] = channelDetails.id;
+                } else {
+                    parsed['type'] = 'chat';
+                }
+
                 break;
         }
 
@@ -273,7 +284,7 @@ if (isConnected) {
 
     socket.on('disconnect', function() {
         $.ajax({
-            type: 'get',
+            type: 'post',
             url: '/user/delete/',
             dataType: 'json',
             data: 'handle=' + you + '&sessionid=' + isConnected.transport.sessionid,
