@@ -64,6 +64,8 @@ For example to change the default port value for the chat server, look for chat 
 
 To change the appearance of the "UI" simply edit the index.html file.
 
+You can create channels and join them by clicking on their link. Still needs some refinement, however to post to a channel type /1 (or x - this number is derived from the order in which you joined the channel).
+
 ### Update
 
 I have added [expressjs](http://expressjs.com/) and [mongoDB](http://www.mongodb.org/) to capture user names in a database (for display purposes and for kicks really).
